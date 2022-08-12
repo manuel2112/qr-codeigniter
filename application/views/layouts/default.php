@@ -37,8 +37,10 @@
 					<?php if( $this->isadminqrsession ){ ?>
 
 						<a href="<?php echo base_url()?>admin" title="ADMINISTRADOR" class="<?php echo $this->uri->segment(1) == 'admin' ? 'active' : '' ;?>"><i class="fa fa-lock"></i> <span>ADMINISTRADOR</span></a>
-						
+
 						<a href="<?php echo base_url()?>gestion" title="GESTIÓN" class="<?php echo $this->uri->segment(1) == 'gestion' ? 'active' : '' ;?>"><i class="fa fa-cogs"></i> <span>GESTIÓN</span></a>
+
+						<a href="<?php echo base_url()?>tipospago" title="TIPOS DE PAGO" class="<?php echo $this->uri->segment(1) == 'tipospago' ? 'active' : '' ;?>"><i class="fa fa-shopping-cart"></i> <span>TIPOS DE PAGO</span></a>
 
 						<?php if( in_array( $_SERVER['REMOTE_ADDR'], array( '127.0.0.1', '::1' ) ) ){ ?>						
 							<a href="<?php echo base_url()?>mailing" title="MAILING" class="<?php echo $this->uri->segment(1) == 'mailing' ? 'active' : '' ;?>"><i class="fa fa-object-group"></i> <span>MAILING</span></a>
@@ -52,8 +54,6 @@
                 		<a href="<?php echo base_url()?>home" title="INICIO" class="<?php echo $this->uri->segment(1) == 'home' ? 'active' : '' ;?>"><i class="fa fa-home"></i> <span>INICIO</span></a>
                 		
 						<a href="<?php echo base_url()?>empresa" title="MIS DATOS" class="<?php echo $this->uri->segment(1) == 'empresa' ? 'active' : '' ;?>"><i class="fas fa-cog"></i> <span>MIS DATOS</span></a>
-                		
-						<a href="<?php echo base_url()?>tipospago" title="TIPOS DE PAGO" class="<?php echo $this->uri->segment(1) == 'tipospago' ? 'active' : '' ;?>"><i class="fa fa-shopping-cart"></i> <span>TIPOS DE PAGO</span></a>
 
 						<a href="<?php echo base_url()?>menu" title="MENÚ" class="<?php echo $this->uri->segment(1) == 'menu' ? 'active' : '' ;?>"><i class="fas fa-bars"></i> <span>MENÚ</span></a>
 						

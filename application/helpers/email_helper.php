@@ -81,6 +81,31 @@ if(!function_exists('email_recuperaracion'))
 	}
 }
 
+if(!function_exists('email_pedido'))
+{
+	function email_pedido($data)
+	{
+		$ci = &get_instance();
+		$ci->load->model('empresa_model');
+		$detalle 	= $data->detalle;
+		$cliente 	= $data->persona;
+		$shop 		= $data->shop;
+		$mensaje	= '';
+
+		$mdlEmpresa   	= $ci->empresa_model->getEmpresaTblRow($detalle->idEmpresa);
+		$nmbEmpresa 	= $mdlEmpresa->EMPRESA_NOMBRE;
+		$emailEmpresa 	= $mdlEmpresa->EMPRESA_EMAIL;
+
+		$asunto = 'PEDIDO REALIZADO';
+		
+		$mensaje .= email_usuario_detalle($shop,$detalle,$cliente);
+		$mensaje .= email_aviso();
+		$mensaje .= email_footer();
+				
+		return email_atributos($emailEmpresa,$nmbEmpresa,$asunto,$mensaje);
+	}
+}
+
 if(!function_exists('email_atributos'))
 {
 	function email_atributos($email,$nombre,$asunto,$mensaje)

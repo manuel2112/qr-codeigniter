@@ -121,20 +121,21 @@ class ApiRest extends REST_Controller {
 		$this->response($respuesta);
 	}
 	
-	function pedido_post( )
+	function pedido_post()
 	{
-		$procesado	= FALSE;
 		$data 		= json_decode( file_get_contents("php://input") );
 		$detalle 	= $data->value->detalle;
 		$cliente 	= $data->value->persona;
 		$shop 		= $data->value->shop;
 		$date 		= fechaNow();
+		$process	= FALSE;
 
 		//INSERT CLIENTE
-		$idCliente = $this->cliente_model->insertCliente($cliente->nombre, $cliente->email, $cliente->celular, $cliente->direccion, $cliente->comentario, $date, $date);
+		$direccion = isset($cliente->direccion) ? $cliente->direccion : NULL;
+		$idCliente = $this->cliente_model->insertCliente($cliente->nombre, $cliente->email, $cliente->celular, $direccion, $cliente->comentario, $date, $date);
 
 		//INSERT PEDIDO
-		$idPedido = $this->pedido_model->insertPedido($detalle->idEmpresa, $idCliente, $detalle->entrega, $detalle->pago, $detalle->total, $date, $date, $date);
+		$idPedido = $this->pedido_model->insertPedido($detalle->idEmpresa, $idCliente, $detalle->entrega->TIPO_ENTREGA_ID, $detalle->pago->TIPO_PAGO_ID, $detalle->total, $date, $date, $date);
 
 		//INSERT DETALLE
 		foreach( $shop as $item ){
@@ -143,10 +144,15 @@ class ApiRest extends REST_Controller {
 			$procesado	= TRUE;
 		}
 
+		// ENVIAR EMAIL DE AVISO DE VENTA
+		email_pedido($data->value);
+
+		$process	= TRUE;
+
 		$respuesta = array(
 							'error'		=> FALSE, 
-							'info' 		=> $procesado
-						   );
+							'info' 		=> $process 
+						);
 		$this->response($respuesta);
 	}
 	
