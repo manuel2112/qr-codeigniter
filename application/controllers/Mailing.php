@@ -208,8 +208,7 @@ class Mailing extends CI_Controller {
             
             $i++;
         }
-        
-        
+
         $msn .= '<strong>ESTADO:</strong> '.nmbEstado($state).'<br>';
         $msn .= '<strong>SEGUNDOS PROCESADOS:</strong> '.diffSegundos($start).'<br>';
         $msn .= '<strong>N° LEIDOS:</strong> '.$i.'<br>';
@@ -222,6 +221,103 @@ class Mailing extends CI_Controller {
 
         echo json_encode($data);
 	}
+
+    public function status()
+    {
+        $status = 1; //ACTIVO
+        // $status = 2; //LISTA NEGRA
+        // $status = 3; //REBOTADO
+        // $status = 4; //INACTIVO
+        // $status = 5; //SPAM
+        // $status = 6; //BAJA
+
+        return $status;
+    }
+
+    public function automated()
+    {
+        $start              = fechaNow();
+        $data               = array();
+        $status             = $this->status();
+        $i                  = 0;
+        $msn                = '';
+        $error              = '';
+        $countEditado       = 0;
+        $countNoExistente   = 0;
+        $porLeer            = 0;
+        $action             = true;
+        $path               = dirTxt()."mail/upload.txt";
+        $maxTime            = 100;
+        $execTime           = 0;
+
+        $myFile     = file_get_contents($path);
+        $content    = explode("\r\n", $myFile);
+
+        foreach( $content as $email ){
+
+            if( $execTime >= $maxTime ){
+                break;
+            }
+
+            $email  = strtolower(trim($email));
+
+            if( filter_var($email,FILTER_VALIDATE_EMAIL) ){
+
+                $existe = $this->mailing_model->getCorreoSearchRow($email);
+                
+                if( $existe ){
+                    if( $existe->MAILING_ESTADO_ID != $status ){
+                        $this->mailing_model->updateCorreoState($existe->MAILING_ID, $status);
+                        $countEditado++;
+                    }
+                }else{
+                    $bool = esMicrosoft($email);
+                    $this->mailing_model->insertEmailStatus($email, $bool, $status);
+                    $countNoExistente++;
+                }
+            }else{
+                $error .= $email.'<br>';
+            }
+
+            $execTime   = diffSegundos($start);
+            $i++;
+        }
+        
+        //RECARGAR NUEVOS DATOS EN EL ARCHIVO
+        $upFile     = "upload.txt";
+        $existen    = file($path, FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
+
+        if( count($existen) > 0 ){
+            $content = file($path);
+            array_splice($content, 0, ++$i);
+            $upContent = implode("",$content);
+            logMailing($upFile,$upContent);
+            $action     = true;
+        }else{
+            logMailing($upFile,NULL);
+            $action = false;
+        }
+
+        $existen    = file($path, FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
+        $porLeer    = count($existen);
+        
+        // //COUNT POR LEER
+
+        $msn .= '<strong>ESTADO:</strong> '.nmbEstado($status).'<br>';
+        $msn .= '<strong>SEGUNDOS PROCESADOS:</strong> '.diffSegundos($start).'<br>';
+        $msn .= '<strong>N° LEIDOS:</strong> '.$i.'<br>';
+        $msn .= '<strong>FALTAN:</strong> '.$porLeer.'<br>';
+        $msn .= '<strong>N° EDITADOS:</strong> '.$countEditado.'<br>';
+        $msn .= '<strong>Nº NO EXISTENTES:</strong> '.$countNoExistente.'<br>';
+        
+        $data['error'] = $error;
+        $data['fin']   = $action;
+        $data['time']  = fechaNow();
+        $data['msn']   = $msn;
+
+        echo json_encode($data);
+
+    }
 
 	public function searchTexto()
 	{

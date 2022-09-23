@@ -20,6 +20,8 @@ new Vue({
         bool: {},
         textoSearch: '',
         textRadio: '',
+        msnAutomated:'',
+        actionAutomated:'',
         btnEmail: {
             txt: '<i class="fas fa-sync-alt"></i> INGRESAR EMAIL',
             disabled: true
@@ -320,6 +322,43 @@ new Vue({
             function() {
                 self.swalLog(titleAccion);
                 console.log('Error editEmailProcess');
+            })
+        },
+        executeAutomated(){
+            this.actionAutomated = setInterval(this.automatedProcess, 120000);
+            console.log('INICIALIZADO...');
+        },
+        stopExecuteAutomated(){
+            clearInterval(this.actionAutomated);
+            console.log('FINALIZADO...')
+        },
+        async automatedProcess(){
+            
+            let timer = 0;
+            Swal.fire({
+                title: 'EN PROCESO...',
+                html: '<b></b> SEGUNDOS PROCESADOS.',
+                didOpen: () => {
+                    Swal.showLoading()
+                    const b = Swal.getHtmlContainer().querySelector('b')
+                    setInterval(() => {
+                        b.textContent = timer++;
+                    }, 1000)
+                }
+            })
+
+            const self = this;
+            await this.$http.post(base_url + 'mailing/automated').then(function(res) {
+                self.msnAutomated = res.data.msn;
+                self.instanciar();
+                console.log(res.data.fin,res.data.time);
+                console.log('ERROR',res.data.error);
+                !res.data.fin ? self.stopExecuteAutomated() : '';
+                Swal.close();
+            },
+            function() {
+                self.swalLog('Automated Process');
+                console.log('Error automatedProcess');
             })
         },
         async deleteEmailProcess(){

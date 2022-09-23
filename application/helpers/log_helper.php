@@ -14,6 +14,20 @@ if(!function_exists('logCron'))
 	}
 }
 
+if(!function_exists('logMailing'))
+{
+	function logMailing($file,$texto)
+	{
+		$directorio = dirTxt()."mail/";
+		createDir($directorio);		
+		$texto 		= $texto.PHP_EOL;
+        $ruta 		= $directorio . $file;
+		$myfile     = fopen($ruta, "w") or die("Unable to open file!");
+		fwrite($myfile, $texto);
+		fclose($myfile);
+	}
+}
+
 if(!function_exists('exportFile'))
 {
 	function exportFile($file,$texto)

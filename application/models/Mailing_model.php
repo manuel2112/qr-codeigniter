@@ -80,6 +80,15 @@ class mailing_model extends CI_Model
         $this->db->insert('mailing', $data);
     }  
 
+    public function insertEmailStatus($email,$bool,$status){
+        $data = array(
+                        "MAILING_TXT"           => $email,
+                        'MAILING_MICROSOFT'     => $bool,
+                        'MAILING_ESTADO_ID'     => $status
+                    );
+        $this->db->insert('mailing', $data);
+    }  
+
     public function getCorreoGrupo($paquete,$grupo){
         $where = array(
                         "MAILING_MAILRELAY_STATUS" => FALSE

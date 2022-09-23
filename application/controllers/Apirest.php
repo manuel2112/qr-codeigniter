@@ -141,7 +141,6 @@ class ApiRest extends REST_Controller {
 		foreach( $shop as $item ){
 			$total = $item->PROVAR_VALOR * $item->CANTIDAD;
 			$this->pedido_model->insertPedidoDetalle($idPedido, $item->PROVAR_ID, $item->PRODUCTO_NOMBRE, $item->PROVAR_NOMBRE, $item->PROVAR_VALOR, $item->CANTIDAD, $total, $item->COMENTARIO, $date, $date);
-			$procesado	= TRUE;
 		}
 
 		// ENVIAR EMAIL DE AVISO DE VENTA

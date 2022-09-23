@@ -181,6 +181,14 @@
 
   </div><!-- FIN ROW PRINCIPAL -->
 
+  <button type="button" class="btn btn-primary btn-block" @click="executeAutomated">AUTOMATIZAR</button>
+
+  <div v-if="msnAutomated">
+    <div class="alert alert-success mt-4" v-html="msnAutomated" role="alert"></div>
+    <button type="button" class="btn btn-danger btn-block" @click="stopExecuteAutomated">DETENER</button>
+  </div>
+    
+
   <!--=====================================
   MODAL INSERT EMAIL
   ======================================-->
